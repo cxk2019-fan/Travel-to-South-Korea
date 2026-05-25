@@ -37,6 +37,8 @@
     .head h2{margin:0;font-size:18px;letter-spacing:-.02em}
     .head small{display:block;margin-top:4px;color:var(--muted);font-size:12px;line-height:1.6}
     .pill{padding:7px 10px;border-radius:999px;background:var(--soft);color:#aa5f51;font-size:12px;font-weight:800;white-space:nowrap}
+    .pill.success{background:#eefaf3;color:#4f916c}
+    .pill.warn{background:#fff3d8;color:#a16a1e}
 
     .map-shell{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#e9f8ff 0%,#dff3ff 40%,#d8f0ff 100%);border:1px solid #d6ebf8}
     .map-shell svg{display:block;width:100%;height:auto}
@@ -52,7 +54,7 @@
     .stop.current{border-color:#ffc7b8;background:#fff1ec}
     .stop.done{border-color:#bfe3cf;background:#f2fbf6}
 
-    .score-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+    .score-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
     .score-box{padding:12px;border-radius:16px;background:#fffaf7;border:1px solid var(--line)}
     .score-box strong{display:block;font-size:22px;color:#e76c5d}
     .score-box span{display:block;margin-top:4px;font-size:12px;color:var(--muted);line-height:1.4}
@@ -76,6 +78,31 @@
     button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 
     .status{padding:13px 14px;border-radius:18px;background:#eef8ff;border:1px solid #cfe6fb;font-size:13px;line-height:1.7;color:#496173}
+    .status + .status{margin-top:10px}
+    .status.warn{background:#fff8e8;border-color:#f6dca8;color:#6d572d}
+    .status.good{background:#eefaf3;border-color:#ccead8;color:#456b52}
+
+    .weight-panel{display:grid;gap:10px;margin-top:12px}
+    .weight-progress-card{padding:13px 14px;border-radius:18px;background:#fffaf7;border:1px solid var(--line)}
+    .weight-progress-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;font-weight:800;color:#524b54}
+    .weight-progress-title span:last-child{color:#e76c5d}
+    .weight-progress-track{height:13px;border-radius:999px;background:#f3e8e1;overflow:hidden;margin-top:10px}
+    .weight-progress-bar{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--green),var(--main2),var(--main));transition:width .45s ease}
+    .weight-progress-note{font-size:12px;color:var(--muted);line-height:1.6;margin-top:8px}
+
+    .history-card{padding:13px 14px;border-radius:18px;background:#fffaf7;border:1px solid var(--line)}
+    .history-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .history-title strong{font-size:14px}
+    .history-title span{font-size:12px;color:var(--muted)}
+    .weight-history{display:grid;gap:8px;max-height:220px;overflow:auto}
+    .weight-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:14px;background:#fff;border:1px solid #f0e6df;font-size:13px}
+    .weight-row .date{font-weight:800;color:#544d56}
+    .weight-row .right{text-align:right}
+    .weight-row .weight{font-weight:900;color:#e76c5d}
+    .weight-row .change{display:block;margin-top:2px;font-size:11px;color:var(--muted)}
+    .weight-row .change.down{color:#4f916c}
+    .weight-row .change.up{color:#c36a4b}
+
     .logs{display:grid;gap:9px;max-height:280px;overflow:auto}
     .log{padding:12px;border-radius:16px;background:#fffaf7;border:1px solid var(--line);font-size:13px;line-height:1.65;color:#514b54}
     .foot{text-align:center;font-size:12px;color:var(--muted);line-height:1.7;padding:2px 8px}
@@ -94,9 +121,10 @@
       .task-card{grid-column:1}
       .side-card{grid-column:2}
       .log-card{grid-column:1 / -1}
-      .hero-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .hero-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
       .task-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .route-list{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .score-board{grid-template-columns:repeat(5,minmax(0,1fr))}
     }
   </style>
 </head>
@@ -111,6 +139,7 @@
         <div class="mini"><span>目标体重</span><strong>93.0 斤</strong></div>
         <div class="mini"><span>累计健康步</span><strong id="heroPoints">0</strong></div>
         <div class="mini"><span>当前站点</span><strong id="heroCity">东莞</strong></div>
+        <div class="mini"><span>连续有效打卡</span><strong id="heroStreak">0 天</strong></div>
       </div>
     </section>
 
@@ -184,7 +213,7 @@
       <div class="progress">
         <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
         <div class="progress-meta">
-          <span id="progressText">已完成 0 / 3500 健康步</span>
+          <span id="progressText">累计健康步 0 / 3500</span>
           <span id="segmentText">距离下一站深圳还差 500 步</span>
         </div>
       </div>
@@ -201,7 +230,9 @@
         <div class="pill" id="todayLevel">今日还未达标</div>
       </div>
 
-      <div class="task-grid">
+      <div class="status" id="dailyStatus">今天还可以提交一次打卡。提交后当天不能再次提交。</div>
+
+      <div class="task-grid" style="margin-top:10px">
         <div class="task-box">
           <div class="task-head"><strong>🏃 运动</strong><span id="sportScore">0 / 40</span></div>
           <select id="stepSelect">
@@ -212,7 +243,7 @@
           </select>
           <label><input type="checkbox" data-group="sport" data-score="10"> 快走 / 有氧 20 分钟 +10</label>
           <label><input type="checkbox" data-group="sport" data-score="5"> 拉伸 10 分钟 +5</label>
-          <label><input type="checkbox" data-group="sport" data-score="10"> 力量训练 15–20 分钟 +10</label>
+          <label><input type="checkbox" data-group="sport" data-score="10"> 跳操/跳舞 15–20 分钟 +10</label>
           <label><input type="checkbox" data-group="sport" data-score="15"> 打羽毛球 +15</label>
         </div>
 
@@ -240,20 +271,22 @@
         <div class="score-box"><strong id="todayTotal">0</strong><span>今日健康步</span></div>
         <div class="score-box"><strong>70</strong><span>有效前进门槛</span></div>
         <div class="score-box"><strong id="unlockGap">500</strong><span>距下次自动解锁</span></div>
+        <div class="score-box"><strong id="streakDays">0</strong><span>连续有效打卡</span></div>
+        <div class="score-box"><strong id="bestStreakDays">0</strong><span>最长连续纪录</span></div>
       </div>
 
       <div class="btns">
         <button id="submitDay">提交今日打卡</button>
         <button id="clearTasks" class="secondary">清空今日选择</button>
       </div>
-      <div class="hint">说明：如果今天健康步少于 70，记录会保存到日志里，但地图不会前进。</div>
+      <div class="hint">说明：如果今天健康步少于 70，记录会保存到日志里，但地图不会前进；提交后当天不能再次提交。</div>
     </section>
 
     <section class="card side-card">
       <div class="head">
         <div>
           <h2>体重站点直达</h2>
-          <small>达到目标体重后可以坐飞机直达。</small>
+          <small>记录体重后，会显示体重变化、阶段进度和历史记录。</small>
         </div>
       </div>
 
@@ -263,7 +296,28 @@
         <button id="saveWeight" class="green">保存今日体重</button>
         <button id="usePlane" class="blue">坐飞机直达</button>
       </div>
-      <div class="status" id="planeStatus">目前还没有可用的飞行直达券。先向深圳前进，或把体重降到 97.5 斤。</div>
+
+      <div class="weight-panel">
+        <div class="weight-progress-card">
+          <div class="weight-progress-title">
+            <span>阶段体重进度</span>
+            <span id="weightProgressPercent">0%</span>
+          </div>
+          <div class="weight-progress-track"><div class="weight-progress-bar" id="weightProgressBar"></div></div>
+          <div class="weight-progress-note" id="weightProgressText">已完成 0.0 / 5.0 斤，距离目标还差 5.0 斤。</div>
+        </div>
+
+        <div class="status" id="weightChangeStatus">保存体重后，这里会提示比上次轻了还是重了。</div>
+        <div class="status" id="planeStatus">目前还没有可用的飞行直达券。先向深圳前进，或把体重降到 97.5 斤。</div>
+
+        <div class="history-card">
+          <div class="history-title">
+            <strong>体重历史记录</strong>
+            <span id="historyCount">0 条</span>
+          </div>
+          <div class="weight-history" id="weightHistory"></div>
+        </div>
+      </div>
     </section>
 
     <section class="card log-card">
@@ -297,8 +351,6 @@
     const START_WEIGHT = 98.0;
     const TARGET_WEIGHT = 93.0;
     const STEP_PER_STATION = 500;
-    const TOTAL_STATIONS = 7;
-    const TOTAL_POINTS = STEP_PER_STATION * TOTAL_STATIONS;
     const CAPS = { sport: 40, diet: 35, rest: 25 };
 
     const stations = [
@@ -323,23 +375,55 @@
       {x:714,y:206}
     ];
 
-    const defaultState = {
-      currentWeight: START_WEIGHT,
-      totalHealthyPoints: 0,
-      visualPoints: 0,
-      currentStationIndex: 0,
-      unlockedRewards: {},
-      logs: []
-    };
+    const TOTAL_STATIONS = stations.length - 1;
+    const TOTAL_POINTS = STEP_PER_STATION * TOTAL_STATIONS;
+
+    function createDefaultState(){
+      return {
+        currentWeight: START_WEIGHT,
+        totalHealthyPoints: 0,
+        visualPoints: 0,
+        currentStationIndex: 0,
+        unlockedRewards: {},
+        logs: [],
+        weightHistory: [],
+        lastWeightChangeText: '',
+        lastSubmitDate: null,
+        lastSuccessDate: null,
+        streak: 0,
+        bestStreak: 0,
+        submitHistory: {}
+      };
+    }
 
     let state = loadState();
 
     function loadState(){
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? { ...defaultState, ...JSON.parse(raw) } : { ...defaultState };
+        const merged = raw ? { ...createDefaultState(), ...JSON.parse(raw) } : createDefaultState();
+
+        if (!Array.isArray(merged.logs)) merged.logs = [];
+        if (!Array.isArray(merged.weightHistory)) merged.weightHistory = [];
+        if (!merged.unlockedRewards || typeof merged.unlockedRewards !== 'object') merged.unlockedRewards = {};
+        if (!merged.submitHistory || typeof merged.submitHistory !== 'object') merged.submitHistory = {};
+
+        merged.currentWeight = Number(merged.currentWeight || START_WEIGHT);
+        merged.totalHealthyPoints = Number(merged.totalHealthyPoints || 0);
+        merged.visualPoints = Number(merged.visualPoints || 0);
+        merged.currentStationIndex = Math.min(TOTAL_STATIONS, Math.max(0, Number(merged.currentStationIndex || 0)));
+        merged.streak = Number(merged.streak || 0);
+        merged.bestStreak = Number(merged.bestStreak || 0);
+
+        merged.weightHistory = merged.weightHistory
+          .filter(item => item && item.date && Number.isFinite(Number(item.weight)))
+          .map(item => ({ date:String(item.date), weight:Number(Number(item.weight).toFixed(1)) }))
+          .sort((a,b) => b.date.localeCompare(a.date))
+          .slice(0, 120);
+
+        return merged;
       } catch(e) {
-        return { ...defaultState };
+        return createDefaultState();
       }
     }
 
@@ -347,8 +431,50 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    function getDateKey(date = new Date()){
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function dateKeyToDate(key){
+      const [y, m, d] = String(key).split('-').map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function daysBetween(prevKey, currentKey){
+      if (!prevKey || !currentKey) return Infinity;
+      const oneDay = 24 * 60 * 60 * 1000;
+      return Math.round((dateKeyToDate(currentKey) - dateKeyToDate(prevKey)) / oneDay);
+    }
+
+    function fmtShortDate(dateKey){
+      if (!dateKey) return '';
+      const parts = String(dateKey).split('-');
+      return parts.length === 3 ? `${parts[1]}/${parts[2]}` : dateKey;
+    }
+
     function fmtWeight(v){
       return `${Number(v).toFixed(1)} 斤`;
+    }
+
+    function signedWeightChange(diff){
+      const abs = Math.abs(diff).toFixed(1);
+      if (Math.abs(diff) < 0.05) return { text:'和上次一样稳定', cls:'' };
+      if (diff < 0) return { text:`比上次轻了 ${abs} 斤`, cls:'down' };
+      return { text:`比上次重了 ${abs} 斤`, cls:'up' };
+    }
+
+    function getVisibleStreak(){
+      const today = getDateKey();
+      if (!state.lastSuccessDate) return 0;
+      const gap = daysBetween(state.lastSuccessDate, today);
+      return gap <= 1 ? state.streak : 0;
+    }
+
+    function hasSubmittedToday(){
+      return state.lastSubmitDate === getDateKey();
     }
 
     function populateWeightPicker(){
@@ -413,6 +539,7 @@
     }
 
     function getTodayLevel(total){
+      if (hasSubmittedToday()) return '今日已打卡';
       if (total < 70) return '今日还未达标';
       if (total < 85) return '今天稳稳前进';
       return '今天状态超棒';
@@ -425,27 +552,69 @@
       document.getElementById('restScore').textContent = `${scores.rest} / 25`;
       document.getElementById('todayTotal').textContent = total;
       document.getElementById('todayLevel').textContent = getTodayLevel(total);
-      const gap = STEP_PER_STATION - (state.totalHealthyPoints % STEP_PER_STATION || 0);
-      document.getElementById('unlockGap').textContent = state.currentStationIndex >= TOTAL_STATIONS ? '0' : gap;
+
+      const nextNeed = state.currentStationIndex >= TOTAL_STATIONS
+        ? 0
+        : (state.currentStationIndex + 1) * STEP_PER_STATION;
+      const gap = state.currentStationIndex >= TOTAL_STATIONS
+        ? 0
+        : Math.max(0, nextNeed - state.totalHealthyPoints);
+      document.getElementById('unlockGap').textContent = gap;
+
+      document.getElementById('streakDays').textContent = getVisibleStreak();
+      document.getElementById('bestStreakDays').textContent = state.bestStreak || 0;
+      document.getElementById('heroStreak').textContent = `${getVisibleStreak()} 天`;
+    }
+
+    function renderDailyStatus(){
+      const submitBtn = document.getElementById('submitDay');
+      const status = document.getElementById('dailyStatus');
+      const pill = document.getElementById('todayLevel');
+      const today = getDateKey();
+
+      status.className = 'status';
+      pill.className = 'pill';
+
+      if (state.lastSubmitDate === today) {
+        submitBtn.disabled = true;
+        const record = state.submitHistory[today];
+        if (record) {
+          status.textContent = record.qualified
+            ? `今天已经完成有效打卡：${record.total} 健康步。连续有效打卡 ${getVisibleStreak()} 天，明天继续出发。`
+            : `今天已经提交过打卡：${record.total} 健康步，未达到 70，所以小人今天原地休息。`;
+          status.classList.add(record.qualified ? 'good' : 'warn');
+          pill.textContent = record.qualified ? '今日已达标' : '今日已提交';
+          pill.classList.add(record.qualified ? 'success' : 'warn');
+        } else {
+          status.textContent = '今天已经提交过打卡，明天再继续。';
+          pill.textContent = '今日已打卡';
+          pill.classList.add('success');
+        }
+      } else {
+        submitBtn.disabled = false;
+        status.textContent = '今天还可以提交一次打卡。提交后当天不能再次提交。';
+      }
     }
 
     function renderHero(){
       document.getElementById('heroWeight').textContent = fmtWeight(state.currentWeight);
       document.getElementById('heroPoints').textContent = state.totalHealthyPoints;
       document.getElementById('heroCity').textContent = stations[state.currentStationIndex].city;
+      document.getElementById('heroStreak').textContent = `${getVisibleStreak()} 天`;
     }
 
     function renderProgress(){
       const pct = Math.min(100, state.visualPoints / TOTAL_POINTS * 100);
       document.getElementById('progressBar').style.width = `${pct}%`;
-      document.getElementById('progressText').textContent = `已完成 ${state.totalHealthyPoints} / ${TOTAL_POINTS} 健康步`;
+      document.getElementById('progressText').textContent = `累计健康步 ${state.totalHealthyPoints} / ${TOTAL_POINTS}｜路线进度 ${Math.round(state.visualPoints)} / ${TOTAL_POINTS}`;
       if (state.currentStationIndex >= TOTAL_STATIONS) {
         document.getElementById('segmentText').textContent = '已到达首尔，韩国旅程完成！';
         document.getElementById('nextStopPill').textContent = '终点已到达：首尔';
       } else {
         const next = stations[state.currentStationIndex + 1];
-        const remain = STEP_PER_STATION - (state.totalHealthyPoints % STEP_PER_STATION || 0);
-        document.getElementById('segmentText').textContent = `距离下一站${next.city}还差 ${remain} 步`;
+        const nextNeed = (state.currentStationIndex + 1) * STEP_PER_STATION;
+        const remain = Math.max(0, nextNeed - state.totalHealthyPoints);
+        document.getElementById('segmentText').textContent = `健康步自动解锁${next.city}还差 ${remain} 步`;
         document.getElementById('nextStopPill').textContent = `下一站：${next.city}`;
       }
     }
@@ -528,36 +697,134 @@
       document.getElementById('usePlane').disabled = !(weightIdx > state.currentStationIndex);
     }
 
-    function renderLogs(){
-      const logs = document.getElementById('logs');
-      if (!state.logs.length) {
-        logs.innerHTML = '<div class="log">还没有旅行记录。完成今日打卡、更新体重或到站后，这里会自动记录。</div>';
+    function renderWeightProgress(){
+      const totalLoss = START_WEIGHT - TARGET_WEIGHT;
+      const lostRaw = START_WEIGHT - state.currentWeight;
+      const lost = Math.min(totalLoss, Math.max(0, lostRaw));
+      const remain = Math.max(0, state.currentWeight - TARGET_WEIGHT);
+      const pct = Math.min(100, Math.max(0, lost / totalLoss * 100));
+
+      document.getElementById('weightProgressBar').style.width = `${pct}%`;
+      document.getElementById('weightProgressPercent').textContent = `${Math.round(pct)}%`;
+
+      if (state.currentWeight <= TARGET_WEIGHT) {
+        document.getElementById('weightProgressText').textContent = `目标已达成！已完成 ${lost.toFixed(1)} / ${totalLoss.toFixed(1)} 斤。`;
+      } else {
+        document.getElementById('weightProgressText').textContent = `已完成 ${lost.toFixed(1)} / ${totalLoss.toFixed(1)} 斤，距离目标还差 ${remain.toFixed(1)} 斤。`;
+      }
+    }
+
+    function renderWeightChange(){
+      const box = document.getElementById('weightChangeStatus');
+      box.className = 'status';
+      if (!state.lastWeightChangeText) {
+        box.textContent = '保存体重后，这里会提示比上次轻了还是重了。';
         return;
       }
-      logs.innerHTML = state.logs.map(item => `<div class="log">${item}</div>`).join('');
+      box.textContent = state.lastWeightChangeText;
+      if (state.lastWeightChangeText.includes('轻了') || state.lastWeightChangeText.includes('目标')) {
+        box.classList.add('good');
+      } else if (state.lastWeightChangeText.includes('重了')) {
+        box.classList.add('warn');
+      }
+    }
+
+    function renderWeightHistory(){
+      const wrap = document.getElementById('weightHistory');
+      const count = document.getElementById('historyCount');
+      count.textContent = `${state.weightHistory.length} 条`;
+      wrap.innerHTML = '';
+
+      if (!state.weightHistory.length) {
+        const empty = document.createElement('div');
+        empty.className = 'log';
+        empty.textContent = '还没有体重记录。保存今日体重后，这里会显示历史。';
+        wrap.appendChild(empty);
+        return;
+      }
+
+      state.weightHistory.slice(0, 12).forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'weight-row';
+
+        const left = document.createElement('div');
+        left.className = 'date';
+        left.textContent = fmtShortDate(item.date);
+
+        const right = document.createElement('div');
+        right.className = 'right';
+
+        const weight = document.createElement('div');
+        weight.className = 'weight';
+        weight.textContent = fmtWeight(item.weight);
+
+        const change = document.createElement('span');
+        change.className = 'change';
+
+        const older = state.weightHistory[index + 1];
+        if (older) {
+          const diff = Number((item.weight - older.weight).toFixed(1));
+          const info = signedWeightChange(diff);
+          change.textContent = info.text;
+          if (info.cls) change.classList.add(info.cls);
+        } else {
+          change.textContent = '首次记录';
+        }
+
+        right.appendChild(weight);
+        right.appendChild(change);
+        row.appendChild(left);
+        row.appendChild(right);
+        wrap.appendChild(row);
+      });
+    }
+
+    function renderLogs(){
+      const logs = document.getElementById('logs');
+      logs.innerHTML = '';
+      if (!state.logs.length) {
+        const empty = document.createElement('div');
+        empty.className = 'log';
+        empty.textContent = '还没有旅行记录。完成今日打卡、更新体重或到站后，这里会自动记录。';
+        logs.appendChild(empty);
+        return;
+      }
+      state.logs.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'log';
+        div.textContent = item;
+        logs.appendChild(div);
+      });
     }
 
     function renderAll(){
       populateWeightPicker();
       renderScores();
+      renderDailyStatus();
       renderHero();
       renderProgress();
       renderRouteList();
       renderStationsOnMap();
       renderGirl();
       renderPlaneStatus();
+      renderWeightProgress();
+      renderWeightChange();
+      renderWeightHistory();
       renderLogs();
     }
 
     function unlockStation(index, reason){
       if (index <= state.currentStationIndex) return;
-      for (let i = state.currentStationIndex + 1; i <= index; i++) {
+      const oldIndex = state.currentStationIndex;
+      for (let i = oldIndex + 1; i <= index; i++) {
         state.unlockedRewards[stations[i].city] = true;
-        addLog(`到达 ${stations[i].city}。${reason} 奖励已弹出。`);
+        state.logs.unshift(`${new Date().toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' })}｜到达 ${stations[i].city}。${reason} 奖励已解锁。`);
       }
+      state.logs = state.logs.slice(0, 80);
       state.currentStationIndex = index;
       state.visualPoints = Math.max(state.visualPoints, index * STEP_PER_STATION);
       saveState();
+      renderLogs();
       const station = stations[index];
       showModal(`恭喜到达：${station.city}`, `${USER} 已经到达 ${station.city}。`, station.reward);
     }
@@ -566,50 +833,116 @@
       document.getElementById('stepSelect').value = '0';
       document.querySelectorAll('input[type="checkbox"][data-group]').forEach(i => i.checked = false);
       renderScores();
+      renderDailyStatus();
+    }
+
+    function updateStreakForToday(total, today){
+      if (total >= 70) {
+        if (!state.lastSuccessDate) {
+          state.streak = 1;
+        } else {
+          const gap = daysBetween(state.lastSuccessDate, today);
+          if (gap === 1) state.streak = (state.streak || 0) + 1;
+          else if (gap === 0) state.streak = Math.max(1, state.streak || 1);
+          else state.streak = 1;
+        }
+        state.lastSuccessDate = today;
+        state.bestStreak = Math.max(state.bestStreak || 0, state.streak || 0);
+      } else {
+        state.streak = 0;
+      }
     }
 
     function submitToday(){
+      const today = getDateKey();
+      if (state.lastSubmitDate === today) {
+        showModal('今天已经打卡过啦', '每日只能提交一次打卡。今天的记录已经保存，明天再继续向韩国出发。');
+        return;
+      }
+
       const { scores, total } = calcScores();
       if (total <= 0) {
         showModal('今天先停靠一下', '还没有选择任何任务，先完成一个轻松任务再继续出发吧。');
         return;
       }
+
+      updateStreakForToday(total, today);
+      state.lastSubmitDate = today;
+      state.submitHistory[today] = {
+        total,
+        qualified: total >= 70,
+        sport: scores.sport,
+        diet: scores.diet,
+        rest: scores.rest
+      };
+
       if (total < 70) {
-        addLog(`今日记录 ${total} 健康步（运动${scores.sport} / 饮食${scores.diet} / 作息${scores.rest}），未达到 70，不前进。`);
+        addLog(`今日记录 ${total} 健康步（运动${scores.sport} / 饮食${scores.diet} / 作息${scores.rest}），未达到 70，不前进。连续有效打卡已清零。`);
         saveState();
         renderAll();
         clearTasks();
-        showModal('今日已记录', `今天一共获得 ${total} 健康步，还没有达到 70，所以小人会原地休息一天。`);
+        showModal('今日已记录', `今天一共获得 ${total} 健康步，还没有达到 70，所以小人会原地休息一天。\n\n今日已提交，明天再继续。`);
         return;
       }
-      const beforeStepIdx = getStepUnlockIndex();
+
       state.totalHealthyPoints = Math.min(TOTAL_POINTS, state.totalHealthyPoints + total);
       state.visualPoints = Math.min(TOTAL_POINTS, state.visualPoints + total);
       saveState();
-      addLog(`今日打卡成功，获得 ${total} 健康步（运动${scores.sport} / 饮食${scores.diet} / 作息${scores.rest}）。`);
+
+      addLog(`今日打卡成功，获得 ${total} 健康步（运动${scores.sport} / 饮食${scores.diet} / 作息${scores.rest}）。连续有效打卡 ${state.streak} 天。`);
       const afterStepIdx = getStepUnlockIndex();
+
       if (afterStepIdx > state.currentStationIndex) {
         unlockStation(afterStepIdx, '累计健康步满 500，');
       } else {
         renderAll();
-        showModal('今天前进了一点点', `今天健康步达到 ${total}，小人已经继续向韩国出发啦。`);
+        showModal('今天前进了一点点', `今天健康步达到 ${total}，小人已经继续向韩国出发啦。\n\n连续有效打卡：${state.streak} 天`);
       }
+
       clearTasks();
       renderAll();
     }
 
+    function upsertWeightHistory(dateKey, weight){
+      const existing = state.weightHistory.find(item => item.date === dateKey);
+      if (existing) {
+        existing.weight = Number(weight.toFixed(1));
+      } else {
+        state.weightHistory.unshift({ date:dateKey, weight:Number(weight.toFixed(1)) });
+      }
+      state.weightHistory = state.weightHistory
+        .sort((a,b) => b.date.localeCompare(a.date))
+        .slice(0, 120);
+    }
+
     function saveWeightToday(){
       const picker = document.getElementById('weightPicker');
-      const value = Number(picker.value);
-      state.currentWeight = Number(value.toFixed(1));
+      const value = Number(Number(picker.value).toFixed(1));
+      const oldWeight = Number(state.currentWeight);
+      const today = getDateKey();
+
+      state.currentWeight = value;
+      upsertWeightHistory(today, value);
+
+      const diff = Number((value - oldWeight).toFixed(1));
+      const changeInfo = signedWeightChange(diff);
+      if (Math.abs(diff) < 0.05) {
+        state.lastWeightChangeText = `今日体重已保存：${fmtWeight(value)}，和上次记录一样稳定。`;
+      } else if (diff < 0) {
+        state.lastWeightChangeText = `今日体重已保存：${fmtWeight(value)}，比上次轻了 ${Math.abs(diff).toFixed(1)} 斤，太棒啦！`;
+      } else {
+        state.lastWeightChangeText = `今日体重已保存：${fmtWeight(value)}，比上次重了 ${Math.abs(diff).toFixed(1)} 斤，没关系，明天继续调整。`;
+      }
+
       saveState();
-      addLog(`记录今日体重：${fmtWeight(state.currentWeight)}。`);
+      addLog(`记录今日体重：${fmtWeight(state.currentWeight)}。${changeInfo.text}。`);
       renderAll();
+
       const weightIdx = getWeightUnlockIndex();
       if (weightIdx > state.currentStationIndex) {
-        showModal('飞行直达券已解锁', `当前体重已达到 ${stations[weightIdx].city} 的站点要求。你现在可以点击“坐飞机直达”。`);
+        showModal('飞行直达券已解锁', `${state.lastWeightChangeText}\n\n当前体重已达到 ${stations[weightIdx].city} 的站点要求。你现在可以点击“坐飞机直达”。`);
       } else {
-        showModal('体重已保存', `今天体重已记录为 ${fmtWeight(state.currentWeight)}。`);
+        showModal('体重已保存', state.lastWeightChangeText);
       }
     }
 
@@ -630,18 +963,27 @@
     document.getElementById('usePlane').addEventListener('click', usePlane);
     document.getElementById('resetAll').addEventListener('click', () => {
       if (confirm('确定要重置全部数据吗？')) {
-        state = { ...defaultState };
+        state = createDefaultState();
         saveState();
+        clearTasks();
         renderAll();
-        showModal('已重置', '所有健康步、体重记录和旅程进度都已经清空。');
+        showModal('已重置', '所有健康步、体重记录、连续打卡和旅程进度都已经清空。');
       }
     });
     document.getElementById('modalOk').addEventListener('click', closeModal);
     document.getElementById('modalMask').addEventListener('click', (e) => {
       if (e.target.id === 'modalMask') closeModal();
     });
-    document.getElementById('stepSelect').addEventListener('change', renderScores);
-    document.querySelectorAll('input[type="checkbox"][data-group]').forEach(input => input.addEventListener('change', renderScores));
+    document.getElementById('stepSelect').addEventListener('change', () => {
+      renderScores();
+      renderDailyStatus();
+    });
+    document.querySelectorAll('input[type="checkbox"][data-group]').forEach(input => {
+      input.addEventListener('change', () => {
+        renderScores();
+        renderDailyStatus();
+      });
+    });
 
     renderAll();
   </script>
