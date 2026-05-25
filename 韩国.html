@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>我要去韩国！｜李健清专属减脂旅行</title>
+  <style>
+    :root{
+      --bg:#fff8f5;
+      --card:#ffffff;
+      --text:#2c2b31;
+      --muted:#7b7788;
+      --line:#ece4df;
+      --main:#ff8b7b;
+      --main2:#ffb36e;
+      --green:#82c59f;
+      --blue:#8db6ff;
+      --soft:#fff1ec;
+      --shadow:0 14px 34px rgba(112,70,60,.12);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#fff9f6 0%,#fff7f2 45%,#f5f9ff 100%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+    body{padding:12px 12px calc(26px + env(safe-area-inset-bottom));}
+    .app{max-width:460px;margin:0 auto;display:grid;gap:14px}
+    .card{background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.9);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .hero{padding:18px;background:linear-gradient(145deg,rgba(255,139,123,.96),rgba(255,188,128,.94));color:#fff;position:relative;overflow:hidden}
+    .hero:after{content:"✈";position:absolute;right:14px;top:-8px;font-size:78px;opacity:.18;transform:rotate(-12deg)}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.23);font-size:12px;font-weight:700;letter-spacing:.02em}
+    h1{margin:12px 0 8px;font-size:34px;line-height:1.02;letter-spacing:-.05em}
+    .hero p{margin:0;font-size:14px;line-height:1.7;color:rgba(255,255,255,.95)}
+    .hero-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+    .mini{padding:12px;border-radius:18px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.24)}
+    .mini span{display:block;font-size:12px;color:rgba(255,255,255,.8)}
+    .mini strong{display:block;margin-top:5px;font-size:20px}
+    .head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .head h2{margin:0;font-size:18px;letter-spacing:-.02em}
+    .head small{display:block;margin-top:4px;color:var(--muted);font-size:12px;line-height:1.6}
+    .pill{padding:7px 10px;border-radius:999px;background:var(--soft);color:#aa5f51;font-size:12px;font-weight:800;white-space:nowrap}
+
+    .map-shell{position:relative;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#e9f8ff 0%,#dff3ff 40%,#d8f0ff 100%);border:1px solid #d6ebf8}
+    .map-shell svg{display:block;width:100%;height:auto}
+    .map-note{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;border-top:1px dashed #cde4f0;background:rgba(255,255,255,.6);font-size:12px;color:#587085}
+    .progress{margin-top:10px}
+    .progress-track{height:14px;border-radius:999px;background:#f3e8e1;overflow:hidden}
+    .progress-bar{height:100%;width:0;border-radius:inherit;background:linear-gradient(90deg,var(--main),var(--main2),var(--blue));transition:width .45s ease}
+    .progress-meta{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+    .route-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+    .stop{padding:11px 12px;border-radius:16px;border:1px solid var(--line);background:#fffaf8}
+    .stop .city{font-weight:800;font-size:14px}
+    .stop .cond{margin-top:4px;color:var(--muted);font-size:12px;line-height:1.45}
+    .stop.current{border-color:#ffc7b8;background:#fff1ec}
+    .stop.done{border-color:#bfe3cf;background:#f2fbf6}
+
+    .score-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+    .score-box{padding:12px;border-radius:16px;background:#fffaf7;border:1px solid var(--line)}
+    .score-box strong{display:block;font-size:22px;color:#e76c5d}
+    .score-box span{display:block;margin-top:4px;font-size:12px;color:var(--muted);line-height:1.4}
+
+    .task-grid{display:grid;gap:10px}
+    .task-box{padding:14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,250,247,.86)}
+    .task-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+    .task-head strong{font-size:15px}
+    .task-head span{font-size:12px;color:#d36b5b;font-weight:800}
+    label{display:flex;align-items:flex-start;gap:8px;margin:8px 0;font-size:14px;line-height:1.45;color:#4e4a52;cursor:pointer}
+    input[type="checkbox"]{width:18px;height:18px;margin-top:1px;accent-color:var(--main);flex:0 0 auto}
+    select,button{font:inherit}
+    select{width:100%;padding:12px 13px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--text);outline:none}
+    .hint{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.6}
+
+    .btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    button{appearance:none;border:0;border-radius:999px;padding:12px 16px;background:var(--main);color:#fff;font-weight:800;cursor:pointer;box-shadow:0 10px 20px rgba(231,108,93,.18)}
+    button.secondary{background:#fff;color:#da6d5d;border:1px solid #ffd6ca;box-shadow:none}
+    button.blue{background:var(--blue);box-shadow:0 10px 20px rgba(141,182,255,.22)}
+    button.green{background:var(--green);box-shadow:0 10px 20px rgba(130,197,159,.22)}
+    button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+
+    .status{padding:13px 14px;border-radius:18px;background:#eef8ff;border:1px solid #cfe6fb;font-size:13px;line-height:1.7;color:#496173}
+    .logs{display:grid;gap:9px;max-height:280px;overflow:auto}
+    .log{padding:12px;border-radius:16px;background:#fffaf7;border:1px solid var(--line);font-size:13px;line-height:1.65;color:#514b54}
+    .foot{text-align:center;font-size:12px;color:var(--muted);line-height:1.7;padding:2px 8px}
+
+    .modal-mask{position:fixed;inset:0;background:rgba(27,24,30,.38);display:none;place-items:center;padding:18px;z-index:100}
+    .modal{width:min(420px,100%);background:#fff;border-radius:26px;padding:22px;box-shadow:0 24px 52px rgba(0,0,0,.24)}
+    .modal h3{margin:0 0 10px;font-size:22px;letter-spacing:-.02em}
+    .modal p{margin:0;color:var(--muted);line-height:1.8;white-space:pre-line}
+    .modal .gift{margin:14px 0 0;padding:14px 16px;border-radius:16px;background:#fff2ea;border:1px dashed #ffbea7;font-weight:800;line-height:1.7;color:#8b4f44;white-space:pre-line}
+    .modal .btns{justify-content:flex-end}
+
+    @media (min-width:700px){
+      body{padding-top:20px}
+      .app{max-width:900px;grid-template-columns:1.15fr .85fr}
+      .hero,.map-card{grid-column:1 / -1}
+      .task-card{grid-column:1}
+      .side-card{grid-column:2}
+      .log-card{grid-column:1 / -1}
+      .hero-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .task-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .route-list{grid-template-columns:repeat(4,minmax(0,1fr))}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card hero">
+      <div class="badge">李健清专属路线 · 东莞出发 · 韩国首尔终点</div>
+      <h1>我要去韩国！</h1>
+      <p>每天通过运动、饮食、作息来获得健康步；单日健康步达到 <b>70</b> 才算一次有效前进，小人会往前走一点点。累计每满 <b>500</b> 健康步自动解锁下一站；如果体重达成阶段目标，也可以直接坐飞机到对应站点。</p>
+      <div class="hero-grid">
+        <div class="mini"><span>当前体重</span><strong id="heroWeight">98.0 斤</strong></div>
+        <div class="mini"><span>目标体重</span><strong>93.0 斤</strong></div>
+        <div class="mini"><span>累计健康步</span><strong id="heroPoints">0</strong></div>
+        <div class="mini"><span>当前站点</span><strong id="heroCity">东莞</strong></div>
+      </div>
+    </section>
+
+    <section class="card map-card">
+      <div class="head">
+        <div>
+          <h2>中国 → 韩国全景地图</h2>
+          <small>可爱长发女生会沿着路线前进。奖励内容不会提前显示，到站后才会弹出。</small>
+        </div>
+        <div class="pill" id="nextStopPill">下一站：深圳</div>
+      </div>
+
+      <div class="map-shell">
+        <svg viewBox="0 0 800 440" aria-label="中国和韩国地图及旅行路线">
+          <defs>
+            <linearGradient id="seaGrad" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#eaf9ff"/>
+              <stop offset="100%" stop-color="#d6efff"/>
+            </linearGradient>
+            <linearGradient id="landGrad" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#ccecc7"/>
+              <stop offset="100%" stop-color="#aad9ba"/>
+            </linearGradient>
+            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#77a2b8" flood-opacity="0.18"/>
+            </filter>
+          </defs>
+          <rect x="0" y="0" width="800" height="440" fill="url(#seaGrad)"/>
+          <g opacity="0.65">
+            <circle cx="78" cy="72" r="26" fill="#ffffff"/>
+            <circle cx="108" cy="72" r="20" fill="#ffffff"/>
+            <circle cx="132" cy="72" r="14" fill="#ffffff"/>
+          </g>
+          <g opacity="0.5">
+            <circle cx="644" cy="82" r="22" fill="#ffffff"/>
+            <circle cx="668" cy="82" r="16" fill="#ffffff"/>
+            <circle cx="688" cy="82" r="10" fill="#ffffff"/>
+          </g>
+          <path d="M70 290 C85 232, 120 178, 170 148 C212 122, 255 110, 308 108 C362 106, 414 117, 446 133 C474 147, 501 167, 516 196 C523 209, 524 225, 538 239 C554 255, 566 277, 560 298 C551 325, 519 338, 498 345 C456 360, 431 364, 389 365 C344 366, 309 360, 267 344 C228 329, 181 328, 150 316 C114 302, 86 305, 70 290 Z" fill="url(#landGrad)" filter="url(#softShadow)"/>
+          <path d="M575 176 C589 156, 605 146, 622 147 C637 148, 646 159, 645 173 C645 185, 640 196, 632 208 C628 215, 629 226, 627 238 C624 255, 615 270, 603 280 C592 289, 579 286, 575 274 C570 261, 570 247, 573 232 C575 218, 568 202, 575 176 Z" fill="url(#landGrad)" filter="url(#softShadow)"/>
+          <ellipse cx="610" cy="322" rx="18" ry="10" fill="#b5e3c2"/>
+          <text x="184" y="124" fill="#5e8d77" font-size="20" font-weight="700">中国</text>
+          <text x="597" y="140" fill="#5e8d77" font-size="20" font-weight="700">韩国</text>
+          <path id="routePath" d="M130 298 C170 280, 220 265, 275 252 C330 238, 390 228, 445 214 C500 200, 555 188, 615 186 C650 185, 686 190, 714 206" fill="none" stroke="#ff9e87" stroke-width="8" stroke-linecap="round" stroke-dasharray="2 18" opacity="0.9"/>
+
+          <g id="stationLayer"></g>
+
+          <g id="girlMarker" transform="translate(130 298)">
+            <ellipse cx="0" cy="24" rx="24" ry="9" fill="rgba(52,91,126,.16)"/>
+            <g transform="translate(-18,-38)">
+              <circle cx="22" cy="18" r="11" fill="#ffd9c8"/>
+              <path d="M12 15 C10 3, 20 -2, 29 1 C38 4, 42 14, 38 24 C35 22, 34 19, 31 18 C28 17, 28 19, 24 19 C21 19, 20 17, 17 19 C14 21, 13 23, 10 24 C9 20, 10 18, 12 15 Z" fill="#5f3d3a"/>
+              <path d="M12 31 C18 26, 27 25, 33 31 L38 56 C30 61, 14 61, 6 56 Z" fill="#ff8ba5"/>
+              <path d="M12 34 L5 48" stroke="#ffd9c8" stroke-width="5" stroke-linecap="round"/>
+              <path d="M31 34 L43 44" stroke="#ffd9c8" stroke-width="5" stroke-linecap="round"/>
+              <path d="M18 57 L14 75" stroke="#ffd9c8" stroke-width="5" stroke-linecap="round"/>
+              <path d="M28 57 L31 75" stroke="#ffd9c8" stroke-width="5" stroke-linecap="round"/>
+              <path d="M9 76 L18 76" stroke="#f27e67" stroke-width="6" stroke-linecap="round"/>
+              <path d="M28 76 L37 76" stroke="#f27e67" stroke-width="6" stroke-linecap="round"/>
+              <rect x="43" y="43" width="14" height="22" rx="3" fill="#9dd0ff" stroke="#5a89b1" stroke-width="2"/>
+              <path d="M48 39 Q50 33 53 39" stroke="#5a89b1" stroke-width="2" fill="none"/>
+            </g>
+          </g>
+        </svg>
+        <div class="map-note">
+          <span id="mapNoteLeft">今天还没前进</span>
+          <span id="mapNoteRight">累计每 500 健康步解锁下一站</span>
+        </div>
+      </div>
+
+      <div class="progress">
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="progress-meta">
+          <span id="progressText">已完成 0 / 3500 健康步</span>
+          <span id="segmentText">距离下一站深圳还差 500 步</span>
+        </div>
+      </div>
+
+      <div class="route-list" id="routeList"></div>
+    </section>
+
+    <section class="card task-card">
+      <div class="head">
+        <div>
+          <h2>今日健康步打卡</h2>
+          <small>只保留 3 类：运动、饮食、作息。单日满 70 步才会真正前进。</small>
+        </div>
+        <div class="pill" id="todayLevel">今日还未达标</div>
+      </div>
+
+      <div class="task-grid">
+        <div class="task-box">
+          <div class="task-head"><strong>🏃 运动</strong><span id="sportScore">0 / 40</span></div>
+          <select id="stepSelect">
+            <option value="0">今日步数未达 5000：+0</option>
+            <option value="10">今日步数达到 5000：+10</option>
+            <option value="15">今日步数达到 7000：+15</option>
+            <option value="20">今日步数达到 9000：+20</option>
+          </select>
+          <label><input type="checkbox" data-group="sport" data-score="10"> 快走 / 有氧 20 分钟 +10</label>
+          <label><input type="checkbox" data-group="sport" data-score="5"> 拉伸 10 分钟 +5</label>
+          <label><input type="checkbox" data-group="sport" data-score="10"> 力量训练 15–20 分钟 +10</label>
+          <label><input type="checkbox" data-group="sport" data-score="15"> 打羽毛球 +15</label>
+        </div>
+
+        <div class="task-box">
+          <div class="task-head"><strong>🥗 饮食</strong><span id="dietScore">0 / 35</span></div>
+          <label><input type="checkbox" data-group="diet" data-score="5"> 早餐正常吃 +5</label>
+          <label><input type="checkbox" data-group="diet" data-score="5"> 午餐正常吃，不暴食 +5</label>
+          <label><input type="checkbox" data-group="diet" data-score="10"> 吃少油食品 +10</label>
+          <label><input type="checkbox" data-group="diet" data-score="10"> 晚餐七分饱 +10</label>
+          <label><input type="checkbox" data-group="diet" data-score="10"> 今天没有夜宵 +10</label>
+          <label><input type="checkbox" data-group="diet" data-score="10"> 没有奶茶 / 含糖饮料 +10</label>
+        </div>
+
+        <div class="task-box">
+          <div class="task-head"><strong>🌙 作息</strong><span id="restScore">0 / 25</span></div>
+          <label><input type="checkbox" data-group="rest" data-score="10"> 睡眠达到 7 小时左右 +10</label>
+          <label><input type="checkbox" data-group="rest" data-score="5"> 23:30 前睡觉 +5</label>
+          <label><input type="checkbox" data-group="rest" data-score="5"> 今天没有熬夜 +5</label>
+          <label><input type="checkbox" data-group="rest" data-score="5"> 睡前 30 分钟不吃东西 +5</label>
+          <label><input type="checkbox" data-group="rest" data-score="5"> 心情愉悦 +5</label>
+        </div>
+      </div>
+
+      <div class="score-board">
+        <div class="score-box"><strong id="todayTotal">0</strong><span>今日健康步</span></div>
+        <div class="score-box"><strong>70</strong><span>有效前进门槛</span></div>
+        <div class="score-box"><strong id="unlockGap">500</strong><span>距下次自动解锁</span></div>
+      </div>
+
+      <div class="btns">
+        <button id="submitDay">提交今日打卡</button>
+        <button id="clearTasks" class="secondary">清空今日选择</button>
+      </div>
+      <div class="hint">说明：如果今天健康步少于 70，记录会保存到日志里，但地图不会前进。</div>
+    </section>
+
+    <section class="card side-card">
+      <div class="head">
+        <div>
+          <h2>体重站点直达</h2>
+          <small>用手机原生滚轮选择体重，精确到小数点后一位。达到目标体重后可以坐飞机直达。</small>
+        </div>
+      </div>
+
+      <label for="weightPicker" style="font-size:14px;font-weight:800;display:block;margin-bottom:8px">今天体重（斤）</label>
+      <select id="weightPicker"></select>
+      <div class="btns">
+        <button id="saveWeight" class="green">保存今日体重</button>
+        <button id="usePlane" class="blue">坐飞机直达</button>
+      </div>
+      <div class="status" id="planeStatus">目前还没有可用的飞行直达券。先向深圳前进，或把体重降到 97.5 斤。</div>
+    </section>
+
+    <section class="card log-card">
+      <div class="head">
+        <div>
+          <h2>旅行记录</h2>
+          <small>到站、体重更新、奖励弹窗都会在这里保留简要记录。</small>
+        </div>
+        <button id="resetAll" class="secondary">重置数据</button>
+      </div>
+      <div class="logs" id="logs"></div>
+    </section>
+
+    <div class="foot">本页面为李健清的私人定制减脂旅行原型，数据只保存在当前浏览器本地。</div>
+  </main>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <h3 id="modalTitle">提示</h3>
+      <p id="modalText"></p>
+      <div class="gift" id="modalGift" style="display:none"></div>
+      <div class="btns">
+        <button id="modalOk">知道啦</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'li_jianqing_trip_v2';
+    const USER = '李健清';
+    const START_WEIGHT = 98.0;
+    const TARGET_WEIGHT = 93.0;
+    const STEP_PER_STATION = 500;
+    const TOTAL_STATIONS = 7;
+    const TOTAL_POINTS = STEP_PER_STATION * TOTAL_STATIONS;
+    const CAPS = { sport: 40, diet: 35, rest: 25 };
+
+    const stations = [
+      { city:'东莞', weight:null, reward:'从东莞出发，准备去韩国。' },
+      { city:'深圳', weight:97.5, reward:'旅行过程中，董纪君请你喝一杯饮料。' },
+      { city:'厦门', weight:96.8, reward:'旅行过程中，董纪君送你一个首饰。' },
+      { city:'杭州', weight:96.0, reward:'旅行过程中，董纪君请你喝下午茶。' },
+      { city:'上海', weight:95.3, reward:'旅行过程中，djj请客吃一顿。' },
+      { city:'青岛', weight:94.5, reward:'旅行过程中，董纪君陪你拍一组照片。' },
+      { city:'仁川', weight:93.8, reward:'旅行过程中，收获一件新衣服。' },
+      { city:'首尔', weight:93.0, reward:'旅行过程中，董纪君请你吃一顿韩餐。\n旅行过程中，董纪君请一晚上住宿。' }
+    ];
+
+    const stationCoords = [
+      {x:130,y:298},
+      {x:205,y:274},
+      {x:284,y:252},
+      {x:374,y:232},
+      {x:468,y:209},
+      {x:558,y:192},
+      {x:642,y:187},
+      {x:714,y:206}
+    ];
+
+    const defaultState = {
+      currentWeight: START_WEIGHT,
+      totalHealthyPoints: 0,
+      visualPoints: 0,
+      currentStationIndex: 0,
+      unlockedRewards: {},
+      logs: []
+    };
+
+    let state = loadState();
+
+    function loadState(){
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? { ...defaultState, ...JSON.parse(raw) } : { ...defaultState };
+      } catch(e) {
+        return { ...defaultState };
+      }
+    }
+
+    function saveState(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function fmtWeight(v){
+      return `${Number(v).toFixed(1)} 斤`;
+    }
+
+    function populateWeightPicker(){
+      const picker = document.getElementById('weightPicker');
+      picker.innerHTML = '';
+      for (let w = 85.0; w <= 105.0 + 0.0001; w += 0.1) {
+        const value = Number(w.toFixed(1));
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = value.toFixed(1);
+        if (Number(state.currentWeight).toFixed(1) === value.toFixed(1)) option.selected = true;
+        picker.appendChild(option);
+      }
+    }
+
+    function showModal(title, text, gift=''){
+      document.getElementById('modalTitle').textContent = title;
+      document.getElementById('modalText').textContent = text;
+      const giftEl = document.getElementById('modalGift');
+      if (gift) {
+        giftEl.style.display = 'block';
+        giftEl.textContent = gift;
+      } else {
+        giftEl.style.display = 'none';
+        giftEl.textContent = '';
+      }
+      document.getElementById('modalMask').style.display = 'grid';
+    }
+
+    function closeModal(){
+      document.getElementById('modalMask').style.display = 'none';
+    }
+
+    function addLog(text){
+      const time = new Date().toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+      state.logs.unshift(`${time}｜${text}`);
+      state.logs = state.logs.slice(0, 80);
+      saveState();
+      renderLogs();
+    }
+
+    function getWeightUnlockIndex(){
+      let idx = 0;
+      for (let i = 1; i < stations.length; i++) {
+        if (state.currentWeight <= stations[i].weight) idx = i;
+      }
+      return idx;
+    }
+
+    function getStepUnlockIndex(){
+      return Math.min(TOTAL_STATIONS, Math.floor(state.totalHealthyPoints / STEP_PER_STATION));
+    }
+
+    function calcScores(){
+      const scores = { sport:Number(document.getElementById('stepSelect').value), diet:0, rest:0 };
+      document.querySelectorAll('input[type="checkbox"][data-group]').forEach(input => {
+        if (input.checked) scores[input.dataset.group] += Number(input.dataset.score || 0);
+      });
+      Object.keys(CAPS).forEach(k => scores[k] = Math.min(scores[k], CAPS[k]));
+      const total = Math.min(100, scores.sport + scores.diet + scores.rest);
+      return { scores, total };
+    }
+
+    function getTodayLevel(total){
+      if (total < 70) return '今日还未达标';
+      if (total < 85) return '今天稳稳前进';
+      return '今天状态超棒';
+    }
+
+    function renderScores(){
+      const { scores, total } = calcScores();
+      document.getElementById('sportScore').textContent = `${scores.sport} / 40`;
+      document.getElementById('dietScore').textContent = `${scores.diet} / 35`;
+      document.getElementById('restScore').textContent = `${scores.rest} / 25`;
+      document.getElementById('todayTotal').textContent = total;
+      document.getElementById('todayLevel').textContent = getTodayLevel(total);
+      const gap = STEP_PER_STATION - (state.totalHealthyPoints % STEP_PER_STATION || 0);
+      document.getElementById('unlockGap').textContent = state.currentStationIndex >= TOTAL_STATIONS ? '0' : gap;
+    }
+
+    function renderHero(){
+      document.getElementById('heroWeight').textContent = fmtWeight(state.currentWeight);
+      document.getElementById('heroPoints').textContent = state.totalHealthyPoints;
+      document.getElementById('heroCity').textContent = stations[state.currentStationIndex].city;
+    }
+
+    function renderProgress(){
+      const pct = Math.min(100, state.visualPoints / TOTAL_POINTS * 100);
+      document.getElementById('progressBar').style.width = `${pct}%`;
+      document.getElementById('progressText').textContent = `已完成 ${state.totalHealthyPoints} / ${TOTAL_POINTS} 健康步`;
+      if (state.currentStationIndex >= TOTAL_STATIONS) {
+        document.getElementById('segmentText').textContent = '已到达首尔，韩国旅程完成！';
+        document.getElementById('nextStopPill').textContent = '终点已到达：首尔';
+      } else {
+        const next = stations[state.currentStationIndex + 1];
+        const remain = STEP_PER_STATION - (state.totalHealthyPoints % STEP_PER_STATION || 0);
+        document.getElementById('segmentText').textContent = `距离下一站${next.city}还差 ${remain} 步`;
+        document.getElementById('nextStopPill').textContent = `下一站：${next.city}`;
+      }
+    }
+
+    function renderRouteList(){
+      const list = document.getElementById('routeList');
+      list.innerHTML = '';
+      stations.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'stop';
+        if (index < state.currentStationIndex) div.classList.add('done');
+        if (index === state.currentStationIndex) div.classList.add('current');
+        const cond = index === 0
+          ? '起点'
+          : `500健康步或体重达到 ${fmtWeight(item.weight)}`;
+        div.innerHTML = `<div class="city">${item.city}</div><div class="cond">${cond}</div>`;
+        list.appendChild(div);
+      });
+    }
+
+    function renderStationsOnMap(){
+      const layer = document.getElementById('stationLayer');
+      layer.innerHTML = '';
+      stations.forEach((item, i) => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        const p = stationCoords[i];
+        const done = i <= state.currentStationIndex;
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', p.x);
+        circle.setAttribute('cy', p.y);
+        circle.setAttribute('r', i === 0 ? 12 : 10);
+        circle.setAttribute('fill', done ? '#ff8b7b' : '#ffffff');
+        circle.setAttribute('stroke', done ? '#ff8b7b' : '#9bc7df');
+        circle.setAttribute('stroke-width', i === state.currentStationIndex ? 5 : 3);
+        g.appendChild(circle);
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', p.x);
+        text.setAttribute('y', p.y - 18);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-size', '14');
+        text.setAttribute('font-weight', '700');
+        text.setAttribute('fill', '#4f6f84');
+        text.textContent = item.city;
+        g.appendChild(text);
+        layer.appendChild(g);
+      });
+    }
+
+    function getGirlPosition(){
+      let progress = Math.max(state.visualPoints, state.currentStationIndex * STEP_PER_STATION);
+      progress = Math.min(TOTAL_POINTS, progress);
+      const seg = Math.min(TOTAL_STATIONS - 1, Math.floor(progress / STEP_PER_STATION));
+      const frac = progress >= TOTAL_POINTS ? 1 : (progress % STEP_PER_STATION) / STEP_PER_STATION;
+      const start = stationCoords[seg];
+      const end = stationCoords[Math.min(seg + 1, stationCoords.length - 1)];
+      if (progress >= TOTAL_POINTS) return stationCoords[stationCoords.length - 1];
+      return {
+        x: start.x + (end.x - start.x) * frac,
+        y: start.y + (end.y - start.y) * frac
+      };
+    }
+
+    function renderGirl(){
+      const pos = getGirlPosition();
+      document.getElementById('girlMarker').setAttribute('transform', `translate(${pos.x} ${pos.y})`);
+      document.getElementById('mapNoteLeft').textContent = state.currentStationIndex >= TOTAL_STATIONS
+        ? '小人已经到达首尔啦'
+        : `小人正在前往：${stations[state.currentStationIndex + 1].city}`;
+    }
+
+    function renderPlaneStatus(){
+      const weightIdx = getWeightUnlockIndex();
+      if (weightIdx > state.currentStationIndex) {
+        document.getElementById('planeStatus').innerHTML = `已获得飞行直达券：当前体重达到 <b>${stations[weightIdx].city}</b> 站要求，现在可以直接飞过去。`;
+      } else if (weightIdx > 0) {
+        document.getElementById('planeStatus').innerHTML = `当前体重已经达成 <b>${stations[weightIdx].city}</b> 站要求，但你现在的路线进度已经不落后，不需要飞行。`;
+      } else {
+        document.getElementById('planeStatus').innerHTML = `目前还没有可用的飞行直达券。先向深圳前进，或把体重降到 <b>${fmtWeight(stations[1].weight)}</b>。`;
+      }
+      document.getElementById('usePlane').disabled = !(weightIdx > state.currentStationIndex);
+    }
+
+    function renderLogs(){
+      const logs = document.getElementById('logs');
+      if (!state.logs.length) {
+        logs.innerHTML = '<div class="log">还没有旅行记录。完成今日打卡、更新体重或到站后，这里会自动记录。</div>';
+        return;
+      }
+      logs.innerHTML = state.logs.map(item => `<div class="log">${item}</div>`).join('');
+    }
+
+    function renderAll(){
+      populateWeightPicker();
+      renderScores();
+      renderHero();
+      renderProgress();
+      renderRouteList();
+      renderStationsOnMap();
+      renderGirl();
+      renderPlaneStatus();
+      renderLogs();
+    }
+
+    function unlockStation(index, reason){
+      if (index <= state.currentStationIndex) return;
+      for (let i = state.currentStationIndex + 1; i <= index; i++) {
+        state.unlockedRewards[stations[i].city] = true;
+        addLog(`到达 ${stations[i].city}。${reason} 奖励已弹出。`);
+      }
+      state.currentStationIndex = index;
+      state.visualPoints = Math.max(state.visualPoints, index * STEP_PER_STATION);
+      saveState();
+      const station = stations[index];
+      showModal(`恭喜到达：${station.city}`, `${USER} 已经到达 ${station.city}。`, station.reward);
+    }
+
+    function clearTasks(){
+      document.getElementById('stepSelect').value = '0';
+      document.querySelectorAll('input[type="checkbox"][data-group]').forEach(i => i.checked = false);
+      renderScores();
+    }
+
+    function submitToday(){
+      const { scores, total } = calcScores();
+      if (total <= 0) {
+        showModal('今天先停靠一下', '还没有选择任何任务，先完成一个轻松任务再继续出发吧。');
+        return;
+      }
+      if (total < 70) {
+        addLog(`今日记录 ${total} 健康步（运动${scores.sport} / 饮食${scores.diet} / 作息${scores.rest}），未达到 70，不前进。`);
+        saveState();
+        renderAll();
+        clearTasks();
+        showModal('今日已记录', `今天一共获得 ${total} 健康步，还没有达到 70，所以小人会原地休息一天。`);
+        return;
+      }
+      const beforeStepIdx = getStepUnlockIndex();
+      state.totalHealthyPoints = Math.min(TOTAL_POINTS, state.totalHealthyPoints + total);
+      state.visualPoints = Math.min(TOTAL_POINTS, state.visualPoints + total);
+      saveState();
+      addLog(`今日打卡成功，获得 ${total} 健康步（运动${scores.sport} / 饮食${scores.diet} / 作息${scores.rest}）。`);
+      const afterStepIdx = getStepUnlockIndex();
+      if (afterStepIdx > state.currentStationIndex) {
+        unlockStation(afterStepIdx, '累计健康步满 500，');
+      } else {
+        renderAll();
+        showModal('今天前进了一点点', `今天健康步达到 ${total}，小人已经继续向韩国出发啦。`);
+      }
+      clearTasks();
+      renderAll();
+    }
+
+    function saveWeightToday(){
+      const picker = document.getElementById('weightPicker');
+      const value = Number(picker.value);
+      state.currentWeight = Number(value.toFixed(1));
+      saveState();
+      addLog(`记录今日体重：${fmtWeight(state.currentWeight)}。`);
+      renderAll();
+      const weightIdx = getWeightUnlockIndex();
+      if (weightIdx > state.currentStationIndex) {
+        showModal('飞行直达券已解锁', `当前体重已达到 ${stations[weightIdx].city} 的站点要求。你现在可以点击“坐飞机直达”。`);
+      } else {
+        showModal('体重已保存', `今天体重已记录为 ${fmtWeight(state.currentWeight)}。`);
+      }
+    }
+
+    function usePlane(){
+      const weightIdx = getWeightUnlockIndex();
+      if (weightIdx <= state.currentStationIndex) {
+        showModal('暂时不能飞', '当前体重还没有解锁比你现有进度更远的站点。');
+        return;
+      }
+      unlockStation(weightIdx, '达到体重目标，乘坐飞机直达，');
+      addLog(`使用飞行直达券，已飞往 ${stations[weightIdx].city}。`);
+      renderAll();
+    }
+
+    document.getElementById('submitDay').addEventListener('click', submitToday);
+    document.getElementById('clearTasks').addEventListener('click', clearTasks);
+    document.getElementById('saveWeight').addEventListener('click', saveWeightToday);
+    document.getElementById('usePlane').addEventListener('click', usePlane);
+    document.getElementById('resetAll').addEventListener('click', () => {
+      if (confirm('确定要重置全部数据吗？')) {
+        state = { ...defaultState };
+        saveState();
+        renderAll();
+        showModal('已重置', '所有健康步、体重记录和旅程进度都已经清空。');
+      }
+    });
+    document.getElementById('modalOk').addEventListener('click', closeModal);
+    document.getElementById('modalMask').addEventListener('click', (e) => {
+      if (e.target.id === 'modalMask') closeModal();
+    });
+    document.getElementById('stepSelect').addEventListener('change', renderScores);
+    document.querySelectorAll('input[type="checkbox"][data-group]').forEach(input => input.addEventListener('change', renderScores));
+
+    renderAll();
+  </script>
+</body>
+</html>
